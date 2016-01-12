@@ -21,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import org.joda.time.DateTime;
@@ -44,7 +45,7 @@ public class BaseResource {
         this.tokenbyte = tokenbyte;
     }
 
-    @GET
+    @POST
     @UnitOfWork
     @Path("/message/{query}")
     public SimpleEntry<String, String> message(@Auth @PathParam("query") String query) {
@@ -56,18 +57,20 @@ public class BaseResource {
     @GET
     @Timed
     public User create(@QueryParam("name") Optional<String> name,
-            @QueryParam("password") Optional<String> password) throws AuthenticationException {
+            @QueryParam("password") Optional<String> password) {
+        System.out.println("create: "+name.or(""));
         User existinguser = userdao.findOneName(name.or(""));
         if (existinguser == null || existinguser.getId() == 0) {
             User user = userdao.create(new User(name.or(""), password.or("")));
             return user;
         } else {
-            throw new AuthenticationException("The user already exists");
+            //throw new AuthenticationException("The user already exists");
+            return new User("error","The user already exists");
         }
     }
 
     @Path("/login")
-    @GET
+    @POST
     @Timed
     @UnitOfWork
     public SimpleEntry<String, String> login(@QueryParam("name") Optional<String> name,
