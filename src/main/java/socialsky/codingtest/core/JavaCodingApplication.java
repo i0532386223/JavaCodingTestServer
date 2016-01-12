@@ -5,6 +5,8 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import socialsky.codingtest.dao.Token;
+import socialsky.codingtest.dao.TokenDAO;
 import socialsky.codingtest.dao.User;
 import socialsky.codingtest.dao.UserDAO;
 import socialsky.codingtest.health.TemplateHealthCheck;
@@ -27,7 +29,7 @@ public class JavaCodingApplication extends Application<JavaCodingConfiguration> 
     }
 
     private final HibernateBundle<JavaCodingConfiguration> hibernate = 
-            new HibernateBundle<JavaCodingConfiguration>(User.class) {
+            new HibernateBundle<JavaCodingConfiguration>(User.class, Token.class) {
     @Override
     public DataSourceFactory getDataSourceFactory(JavaCodingConfiguration configuration) {
         return configuration.getDataSourceFactory();
@@ -37,8 +39,9 @@ public class JavaCodingApplication extends Application<JavaCodingConfiguration> 
     @Override
     public void run(JavaCodingConfiguration configuration,
             Environment environment) {
-        final UserDAO dao = new UserDAO(hibernate.getSessionFactory());
-        final BaseResource resource = new BaseResource(dao);
+        final UserDAO userdao = new UserDAO(hibernate.getSessionFactory());
+        final TokenDAO tokendao = new TokenDAO(hibernate.getSessionFactory());
+        final BaseResource resource = new BaseResource(userdao, tokendao);
         environment.jersey().register(resource);
 
 //        final TemplateHealthCheck healthCheck
