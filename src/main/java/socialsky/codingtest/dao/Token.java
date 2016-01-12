@@ -44,4 +44,7 @@ public class Token {
 
     @OneToOne
     User user;
+    
+    
+    
 }

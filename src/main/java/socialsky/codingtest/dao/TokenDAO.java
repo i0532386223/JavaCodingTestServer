@@ -17,4 +17,8 @@ public class TokenDAO extends AbstractDAO<Token> {
     public Token addToken(Token token) {
         return persist(token);
     }
+    
+        public Token removeToken(Token token) {
+        return persist(token);
+    }
 }

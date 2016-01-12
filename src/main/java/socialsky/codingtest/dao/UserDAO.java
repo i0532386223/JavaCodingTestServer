@@ -5,7 +5,7 @@
  */
 package socialsky.codingtest.dao;
 
-import com.google.common.base.Optional;
+import jersey.repackaged.com.google.common.base.Optional;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 

@@ -5,6 +5,7 @@
  */
 package socialsky.codingtest.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,12 +13,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "User")
 @NamedQueries({
-    @NamedQuery(name = "socialsky.codingtest.dao.User.findByName", 
+    @NamedQuery(name = "socialsky.codingtest.dao.User.findByName",
             query = "SELECT p FROM User p WHERE p.name= :pname")})
 
 //  WHERE p.name = :pname
@@ -72,6 +75,15 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @JsonIgnore
+    @OneToOne
+    @Transient
+    Token token;
+
+    public void setToken(Token token) {
+        this.token = token;
     }
 
 }
