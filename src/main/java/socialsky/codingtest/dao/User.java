@@ -18,13 +18,12 @@ import java.util.Objects;
 @Entity
 @Table(name = "User")
 @NamedQueries({
-        @NamedQuery(
-                name = "socialsky.codingtest.dao.User.findAll",
-                query = "SELECT p FROM User p"
-        )
-})
+    @NamedQuery(name = "socialsky.codingtest.dao.User.findByName", 
+            query = "SELECT p FROM User p WHERE p.name= :pname")})
 
+//  WHERE p.name = :pname
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -54,6 +53,15 @@ public class User {
     public User() {
     }
 
+    @Override
+    public String toString() {
+        return "User{" + "name=" + name + '}';
+    }
+
+    public User(String name) {
+        this.name = name;
+    }
+
     public User(String name, String password) {
         this.name = name;
         this.password = password;
@@ -68,4 +76,3 @@ public class User {
     }
 
 }
-
