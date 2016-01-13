@@ -45,39 +45,58 @@ public class BaseResource {
         this.tokenbyte = tokenbyte;
     }
 
+    // @Auth 
+    
+    @Produces(MediaType.TEXT_PLAIN)
     @POST
     @UnitOfWork
-    @Path("/message/{query}")
-    public SimpleEntry<String, String> message(@Auth @PathParam("query") String query) {
-        return new SimpleEntry<String, String>("message", "Hello " + query + "!");
+    @Path("/message")
+    public String message(@Auth String query) {
+        return "Hello " + query + "!";
     }
 
     @Path("/create")
     @UnitOfWork
-    @GET
+    @POST
     @Timed
-    public User create(@QueryParam("name") Optional<String> name,
-            @QueryParam("password") Optional<String> password) {
-        System.out.println("create: "+name.or(""));
-        User existinguser = userdao.findOneName(name.or(""));
-        if (existinguser == null || existinguser.getId() == 0) {
-            User user = userdao.create(new User(name.or(""), password.or("")));
-            return user;
-        } else {
-            //throw new AuthenticationException("The user already exists");
-            return new User("error","The user already exists");
+    public User create(User user) {
+        if (user != null) {
+            System.out.println("create: " + user.getName());
+            User existinguser = userdao.findOneName(user.getName());
+            if (existinguser == null || existinguser.getId() == 0) {
+                User user2 = userdao.create(new User(user.getName(), user.getPassword()));
+                return user2;
+            }
         }
+        throw new SecurityException("The user already exists");
+        // return new User("error", "The user already exists");
     }
 
+//    @Path("/create")
+//    @UnitOfWork
+//    @GET
+//    @Timed
+//    public User create(@QueryParam("name") Optional<String> name,
+//            @QueryParam("password") Optional<String> password) {
+//        System.out.println("create: "+name.or(""));
+//        User existinguser = userdao.findOneName(name.or(""));
+//        if (existinguser == null || existinguser.getId() == 0) {
+//            User user = userdao.create(new User(name.or(""), password.or("")));
+//            return user;
+//        } else {
+//            //throw new AuthenticationException("The user already exists");
+//            return new User("error","The user already exists");
+//        }
+//    }
     @Path("/login")
     @POST
     @Timed
     @UnitOfWork
-    public SimpleEntry<String, String> login(@QueryParam("name") Optional<String> name,
-            @QueryParam("password") Optional<String> password) throws AuthenticationException {
-        if (name.or("").length() > 0) {
-            User user = userdao.findOneName(name.or(""));
-            if (user != null && user.getPassword().equals(password.or(""))) {
+    public SimpleEntry<String, String> login(User user) throws AuthenticationException {
+        if (user!=null && user.getName().length() > 0) {
+            System.out.println("login: " + user.getName());
+            User existinguser = userdao.findOneName(user.getName());
+            if (existinguser != null && user.getPassword().equals(user.getPassword())) {
                 HmacSHA512Signer signet = new HmacSHA512Signer(tokenbyte);
                 JsonWebToken token = JsonWebToken.builder().header(JsonWebTokenHeader.HS512())
                         .claim(JsonWebTokenClaim.builder().subject("verified").issuedAt(DateTime.now())
@@ -90,7 +109,7 @@ public class BaseResource {
                 return new SimpleEntry<>("token", sToken);
             }
         }
-        // return new SimpleEntry<String, String>("status", "Incorrect username or password");
+         // return new SimpleEntry<String, String>("status", "Incorrect username or password");
         throw new AuthenticationException("Incorrect username or password");
     }
 

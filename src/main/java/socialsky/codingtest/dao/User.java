@@ -6,6 +6,7 @@
 package socialsky.codingtest.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -78,7 +79,7 @@ public class User {
     }
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @Transient
     Token token;
 

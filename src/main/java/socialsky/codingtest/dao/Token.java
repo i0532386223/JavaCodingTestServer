@@ -5,6 +5,7 @@
  */
 package socialsky.codingtest.dao;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -42,7 +43,7 @@ public class Token {
         this.token = token;
     }
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     User user;
     
     
