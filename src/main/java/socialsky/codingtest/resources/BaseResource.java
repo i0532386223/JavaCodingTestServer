@@ -1,6 +1,5 @@
 package socialsky.codingtest.resources;
 
-import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
 import com.github.toastshaman.dropwizard.auth.jwt.hmac.HmacSHA512Signer;
 import com.github.toastshaman.dropwizard.auth.jwt.model.JsonWebToken;
@@ -9,21 +8,13 @@ import com.github.toastshaman.dropwizard.auth.jwt.model.JsonWebTokenHeader;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.hibernate.UnitOfWork;
-import java.security.Key;
 import java.util.AbstractMap.SimpleEntry;
-import static java.util.Collections.singletonMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
-import javax.ws.rs.PathParam;
 import org.joda.time.DateTime;
 
 import socialsky.codingtest.dao.Token;
@@ -45,8 +36,6 @@ public class BaseResource {
         this.tokenbyte = tokenbyte;
     }
 
-    // @Auth 
-    
     @Produces(MediaType.TEXT_PLAIN)
     @POST
     @UnitOfWork
@@ -69,25 +58,8 @@ public class BaseResource {
             }
         }
         throw new SecurityException("The user already exists");
-        // return new User("error", "The user already exists");
     }
 
-//    @Path("/create")
-//    @UnitOfWork
-//    @GET
-//    @Timed
-//    public User create(@QueryParam("name") Optional<String> name,
-//            @QueryParam("password") Optional<String> password) {
-//        System.out.println("create: "+name.or(""));
-//        User existinguser = userdao.findOneName(name.or(""));
-//        if (existinguser == null || existinguser.getId() == 0) {
-//            User user = userdao.create(new User(name.or(""), password.or("")));
-//            return user;
-//        } else {
-//            //throw new AuthenticationException("The user already exists");
-//            return new User("error","The user already exists");
-//        }
-//    }
     @Path("/login")
     @POST
     @Timed
@@ -109,7 +81,6 @@ public class BaseResource {
                 return new SimpleEntry<>("token", sToken);
             }
         }
-         // return new SimpleEntry<String, String>("status", "Incorrect username or password");
         throw new AuthenticationException("Incorrect username or password");
     }
 
